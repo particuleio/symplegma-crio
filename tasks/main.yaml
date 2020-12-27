@@ -1,0 +1,63 @@
+---
+- name: Crio | Ensure crio required directory exist
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+  - "{{ crio_release_dir }}"
+  - "{{ crio_config_dir }}"
+  - "{{ crio_containers_dir }}"
+
+- name: Crio | Download binaries
+  unarchive:
+    src: "{{ crio_release_url }}"
+    dest: "{{ crio_release_dir }}"
+    remote_src: yes
+    extra_opts: [--strip-components=1]
+  notify: restart crio
+
+- name: Crio | Drop systemd unit
+  template:
+    src: crio.service.j2
+    dest: /etc/systemd/system/crio.service
+  notify: restart crio
+
+- name: Crio | Drop crio config
+  template:
+    src: crio.conf.j2
+    dest: /etc/crio/crio.conf
+  notify: restart crio
+
+- name: Crio | Drop crio umount config
+  template:
+    src: crio-umount.conf.j2
+    dest: /etc/crio/crio-umount.conf
+  notify: restart crio
+
+- name: Crio | Drop policy config
+  template:
+    src: policy.json.j2
+    dest: /etc/containers/policy.json
+  notify: restart crio
+
+- name: Crio | List crio binaries
+  find:
+    paths: "{{ crio_release_dir }}/bin"
+  register: crio_binaries
+  notify: restart crio
+
+- name: Crio | Symlink crio binaries
+  file:
+    src: "{{ item.path }}"
+    dest: "{{ bin_dir }}/{{ item.path | basename }}"
+    state: link
+  with_items: "{{ crio_binaries.files }}"
+  notify: restart crio
+
+- meta: flush_handlers
+
+- name: Crio | Enable Crio unit
+  systemd:
+    name: crio.service
+    state: started
+    enabled: yes
