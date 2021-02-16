@@ -4,9 +4,9 @@ galaxy_info:
   description: Ansible role to bootstrap Crio
   company: particule
   platforms:
-  - name: GenericLinux
-    version:
-    - any
+    - name: GenericLinux
+      version:
+        - any
 
   license: Apache
 
