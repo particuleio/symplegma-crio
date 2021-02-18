@@ -3,5 +3,5 @@
   systemd:
     state: restarted
     name: crio.service
-    daemon_reload: yes
+    daemon_reload: true
   listen: "restart crio"
