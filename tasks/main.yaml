@@ -59,7 +59,8 @@
   with_items: "{{ crio_binaries.files }}"
   notify: restart crio
 
-- meta: flush_handlers
+- name: Crio | Restart crio serving if necessary
+  meta: flush_handlers
 
 - name: Crio | Enable Crio unit
   systemd:
