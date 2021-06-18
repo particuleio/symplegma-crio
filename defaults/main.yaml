@@ -1,7 +1,7 @@
 ---
 bin_dir: /opt/bin
 
-crio_version: v1.20.0
+crio_version: v1.20.3
 crio_release_url: https://github.com/cri-o/cri-o/releases/download/{{ crio_version }}/crio-{{ crio_version }}.tar.gz
 crio_release_dir: /opt/crio
 crio_socket: /run/crio/crio.sock
