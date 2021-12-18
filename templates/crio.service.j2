@@ -2,6 +2,7 @@
 Description=Container Runtime Interface for OCI (CRI-O)
 Documentation=https://github.com/cri-o/cri-o
 Wants=network-online.target
+Before=kubelet.service
 After=network-online.target
 
 [Service]
@@ -25,3 +26,4 @@ Restart=on-abnormal
 
 [Install]
 WantedBy=multi-user.target
+Alias=cri-o.service
