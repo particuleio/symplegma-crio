@@ -38,7 +38,7 @@
     dest: "{{ crio_config_dir }}/crio.conf.d/02-croup-manager.conf"
     mode: 'u+rw,g+r,o+r'
   notify: restart crio
-  when: systemd_cgroup == false
+  when: not systemd_cgroup
 
 - name: Crio | Drop crio runc config
   template:
