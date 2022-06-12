@@ -16,6 +16,7 @@
     state: absent
   with_items:
     - "{{ crio_config_dir }}/crio.conf.d/02-croup-manager.conf"
+  when: systemd_cgroup
 
 - name: Crio | Download binaries
   unarchive:
