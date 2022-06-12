@@ -1,8 +1,8 @@
 ---
 bin_dir: /opt/bin
 
-crio_version: ff0b7feb8e12509076b4b0e338b6334ce466b293
-crio_release_url: https://storage.googleapis.com/k8s-conform-cri-o/artifacts/cri-o.amd64.{{ crio_version }}.tar.gz
+crio_version: v1.24.1
+crio_release_url: https://storage.googleapis.com/cri-o/artifacts/cri-o.amd64.{{ crio_version }}.tar.gz
 crio_release_dir: /opt/crio
 crio_socket: /run/crio/crio.sock
 crio_config_dir: /etc/crio
@@ -12,3 +12,11 @@ crio_containers_dir: /etc/containers
 crio_config: {}
 
 crio_use_crun: true
+
+systemd_cgroup: false
+
+registries_search: ['registry.k8s.io', 'docker.io', 'quay.io', 'registry.access.redhat.com', 'registry.fedoraproject.org']
+
+registries_insecure: []
+
+registries_block: []

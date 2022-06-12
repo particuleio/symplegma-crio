@@ -7,7 +7,15 @@
   with_items:
     - "{{ crio_release_dir }}"
     - "{{ crio_config_dir }}"
+    - "{{ crio_config_dir }}/crio.conf.d"
     - "{{ crio_containers_dir }}"
+
+- name: Crio | Remove files is needed
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ crio_config_dir }}/crio.conf.d/02-croup-manager.conf"
 
 - name: Crio | Download binaries
   unarchive:
@@ -24,17 +32,25 @@
     mode: 'u+rw,g+r,o+r'
   notify: restart crio
 
-- name: Crio | Drop crio config
+- name: Crio | Drop crio cgroups config
   template:
-    src: crio.conf.j2
-    dest: /etc/crio/crio.conf
+    src: 02-cgroup-manager.conf.j2
+    dest: "{{ crio_config_dir }}/crio.conf.d/02-croup-manager.conf"
+    mode: 'u+rw,g+r,o+r'
+  notify: restart crio
+  when: systemd_cgroup == false
+
+- name: Crio | Drop crio runc config
+  template:
+    src: 10-crun.conf.j2
+    dest: "{{ crio_config_dir }}/crio.conf.d/10-crun.conf"
     mode: 'u+rw,g+r,o+r'
   notify: restart crio
 
 - name: Crio | Drop crio umount config
   template:
     src: crio-umount.conf.j2
-    dest: /etc/crio/crio-umount.conf
+    dest: "{{ crio_config_dir }}/crio-umount.conf"
     mode: 'u+rw,g+r,o+r'
   notify: restart crio
 
@@ -42,6 +58,13 @@
   template:
     src: policy.json.j2
     dest: /etc/containers/policy.json
+    mode: 'u+rw,g+r,o+r'
+  notify: restart crio
+
+- name: Crio | Drop registries config
+  template:
+    src: registries.conf.j2
+    dest: /etc/containers/registries.conf
     mode: 'u+rw,g+r,o+r'
   notify: restart crio
 

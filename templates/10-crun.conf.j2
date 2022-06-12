@@ -1,0 +1,8 @@
+[crio.runtime]
+default_runtime = "crun"
+
+[crio.runtime.runtimes.crun]
+runtime_path = "{{ bin_dir }}/crun"
+allowed_annotations = [
+    "io.containers.trace-syscall",
+]
