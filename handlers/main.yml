@@ -1,6 +1,6 @@
 ---
 - name: Crio | Restart crio
-  systemd:
+  ansible.builtin.systemd:
     state: restarted
     name: crio.service
     daemon_reload: true

@@ -1,6 +1,6 @@
 ---
 - name: Crio | Ensure crio required directory exist
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     mode: "u+rw,g+r,o+r"
     state: directory
@@ -19,7 +19,7 @@
   when: systemd_cgroup
 
 - name: Crio | Download binaries
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ crio_release_url }}"
     dest: "{{ crio_release_dir }}"
     remote_src: true
@@ -27,14 +27,14 @@
   notify: restart crio
 
 - name: Crio | Drop systemd unit
-  template:
+  ansible.builtin.template:
     src: crio.service.j2
     dest: /etc/systemd/system/crio.service
     mode: 'u+rw,g+r,o+r'
   notify: restart crio
 
 - name: Crio | Drop crio cgroups config
-  template:
+  ansible.builtin.template:
     src: 02-cgroup-manager.conf.j2
     dest: "{{ crio_config_dir }}/crio.conf.d/02-croup-manager.conf"
     mode: 'u+rw,g+r,o+r'
@@ -42,7 +42,7 @@
   when: not systemd_cgroup
 
 - name: Crio | Drop crio runc config
-  template:
+  ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "{{ crio_config_dir }}/crio.conf.d/{{ item }}"
     mode: 'u+rw,g+r,o+r'
@@ -53,34 +53,34 @@
     - 10-pinns.conf
 
 - name: Crio | Drop crio umount config
-  template:
+  ansible.builtin.template:
     src: crio-umount.conf.j2
     dest: "{{ crio_config_dir }}/crio-umount.conf"
     mode: 'u+rw,g+r,o+r'
   notify: restart crio
 
 - name: Crio | Drop policy config
-  template:
+  ansible.builtin.template:
     src: policy.json.j2
     dest: /etc/containers/policy.json
     mode: 'u+rw,g+r,o+r'
   notify: restart crio
 
 - name: Crio | Drop registries config
-  template:
+  ansible.builtin.template:
     src: registries.conf.j2
     dest: /etc/containers/registries.conf
     mode: 'u+rw,g+r,o+r'
   notify: restart crio
 
 - name: Crio | List crio binaries
-  find:
+  ansible.builtin.find:
     paths: "{{ crio_release_dir }}/bin"
   register: crio_binaries
   notify: restart crio
 
 - name: Crio | Symlink crio binaries
-  file:
+  ansible.builtin.file:
     src: "{{ item.path }}"
     dest: "{{ bin_dir }}/{{ item.path | basename }}"
     state: link
@@ -88,10 +88,10 @@
   notify: restart crio
 
 - name: Crio | Restart crio serving if necessary
-  meta: flush_handlers
+  ansible.builtin.meta: flush_handlers
 
 - name: Crio | Enable Crio unit
-  systemd:
+  ansible.builtin.systemd:
     name: crio.service
     state: started
     enabled: true
