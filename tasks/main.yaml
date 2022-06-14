@@ -43,10 +43,14 @@
 
 - name: Crio | Drop crio runc config
   template:
-    src: 10-crun.conf.j2
-    dest: "{{ crio_config_dir }}/crio.conf.d/10-crun.conf"
+    src: "{{ item }}.j2"
+    dest: "{{ crio_config_dir }}/crio.conf.d/{{ item }}"
     mode: 'u+rw,g+r,o+r'
   notify: restart crio
+  loop:
+    - 10-crun.conf
+    - 10-conmon.conf
+    - 10-pinns.conf
 
 - name: Crio | Drop crio umount config
   template:
